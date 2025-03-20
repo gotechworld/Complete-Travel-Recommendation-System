@@ -16,3 +16,14 @@ pip install -r requirements.txt
 streamlit run app.py
 
 Access the application at http://localhost:8501
+
+### Containerize Streamlit app
+
++ Build the image:
+`docker image build --no-cache -t travel-planner .`
+
++ Run the container:
+`docker container run -d -p 8501:8501 -e GOOGLE_API_KEY="" travel-planner`
+
+__Note__: You'll need to provide your Google Gemini API KEY as an environment variable when running the container.
+
