@@ -6,6 +6,26 @@ from langchain_integration import generate_travel_plan
 from reportlab.lib.pagesizes import letter
 from reportlab.pdfgen import canvas
 
+def create_pdf(content, destination):
+    buffer = io.BytesIO()
+    c = canvas.Canvas(buffer, pagesize=letter)
+    width, height = letter
+
+    # Add title
+    c.setFont("Helvetica-Bold", 16)
+    c.drawString(72, height - 72, f"Travel Plan: {destination}")
+
+    # Add content
+    c.setFont("Helvetica", 12)
+    text_object = c.beginText(72, height - 100)
+    for line in content.split('\n'):
+        text_object.textLine(line)
+    c.drawText(text_object)
+
+    c.save()
+    buffer.seek(0)
+    return buffer
+
 def main():
     st.set_page_config(page_title="Travel Recommendation System", layout="wide")
 
@@ -92,35 +112,14 @@ def main():
             st.caption("Insider advice to enhance your trip")
             st.write("Local tips would appear here")
 
-
-def create_pdf(content, destination):
-    buffer = io.BytesIO()
-    c = canvas.Canvas(buffer, pagesize=letter)
-    width, height = letter
-
-    # Add title
-    c.setFont("Helvetica-Bold", 16)
-    c.drawString(72, height - 72, f"Travel Plan: {destination}")
-
-    # Add content
-    c.setFont("Helvetica", 12)
-    text_object = c.beginText(72, height - 100)
-    for line in content.split('\n'):
-        text_object.textLine(line)
-    c.drawText(text_object)
-
-    c.save()
-    buffer.seek(0)
-    return buffer
-
-pdf_buffer = create_pdf(travel_plan, destination)
-
-st.download_button(
-    label="📥 Download Travel Plan as PDF",
-    data=pdf_buffer,
-    file_name=f"{destination}_travel_plan.pdf",
-    mime="application/pdf"
-)
+            # Download option - moved inside the button click section
+            pdf_buffer = create_pdf(travel_plan, destination)
+            st.download_button(
+                label="📥 Download Travel Plan as PDF",
+                data=pdf_buffer,
+                file_name=f"{destination}_travel_plan.pdf",
+                mime="application/pdf"
+            )
 
 if __name__ == "__main__":
     main()
