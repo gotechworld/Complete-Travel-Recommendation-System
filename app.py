@@ -299,7 +299,7 @@ def main():
         dates = st.text_input("📅 Travel Dates", "May 5-9, 2025")
         st.caption("Format: Month Day-Day, Year")
     with col3:
-        budget = st.number_input("💰 Budget ($)", min_value=100, value=1000, step=100)
+        budget = st.number_input("💰 Budget ($)", min_value=100, value=3000, step=100)
         st.caption("Total budget for your trip")
 
     # Additional preferences
@@ -311,7 +311,7 @@ def main():
         accommodation_type = st.selectbox("🏠 Accommodation Preference",
                                         ["Hotel", "Resort", "Apartment", "Hostel", "Boutique"])
     with col2:
-        travelers = st.number_input("👨‍👩‍👧‍👦 Number of Travelers", min_value=1, value=2)
+        travelers = st.number_input("👨‍👩‍👧‍👦 Number of Travelers", min_value=1, value=5)
         interests = st.multiselect("🎯 Interests",
                                   ["History", "Food", "Nature", "Shopping", "Art", "Nightlife", "Sports"])
 
