@@ -502,7 +502,175 @@ def main():
             st.markdown("---")
             st.subheader("💡 Local Tips")
             st.caption("Insider advice to enhance your trip")
-            st.write("Local tips would appear here")
+            
+            # Create local tips based on destination
+            if destination.lower() == "paris":
+                # Create tabs for different categories of tips
+                tip_tabs = st.tabs(["🍽️ Dining", "💰 Money-Saving", "🚇 Transportation", "🗣️ Language", "⚠️ Safety"])
+            
+                with tip_tabs[0]:  # Dining tips
+                    st.markdown("### Dining Like a Local")
+                    col1, col2 = st.columns(2)
+                    with col1:
+                        st.markdown("""
+                        **Best Times to Eat:**
+                        - Cafés open early (7-8am)
+                        - Lunch: 12-2pm
+                        - Dinner: 7:30-10pm (restaurants may not open before 7pm)
+            
+                        **Ordering Water:**
+                        - Ask for "une carafe d'eau" for free tap water
+                        - Bottled water is charged extra
+            
+                        **Service & Tipping:**
+                        - "Service compris" means tip is included
+                        - Round up or leave €1-2 for good service
+                        """)
+                    with col2:
+                        st.markdown("""
+                        **Local Specialties to Try:**
+                        - Croissants from award-winning bakeries like Du Pain et des Idées
+                        - Steak frites at Le Relais de l'Entrecôte
+                        - Falafel in Le Marais at L'As du Fallafel
+                        - Macarons from Pierre Hermé or Ladurée
+                        - Wine and cheese plate at any local wine bar
+            
+                        **Etiquette:**
+                        - Always greet with "Bonjour" when entering shops
+                        - Keep bread on the table, not on your plate
+                        """)
+            
+                with tip_tabs[1]:  # Money-saving tips
+                    st.markdown("### Budget-Friendly Paris")
+                    col1, col2 = st.columns(2)
+                    with col1:
+                        st.markdown("""
+                        **Free Attractions:**
+                        - Museums on first Sunday of each month
+                        - Père Lachaise Cemetery
+                        - Sacré-Cœur Basilica
+                        - Notre-Dame Cathedral (exterior)
+                        - Jardin du Luxembourg
+            
+                        **Affordable Dining:**
+                        - Eat main meal at lunch with "formule" menu
+                        - Shop at markets like Marché d'Aligre
+                        - Picnic in parks with baguettes, cheese, and wine
+                        """)
+                    with col2:
+                        st.markdown("""
+                        **Transportation Savings:**
+                        - Buy a carnet of 10 metro tickets (cheaper than singles)
+                        - Consider Paris Museum Pass for multiple attractions
+                        - Use Vélib' bike sharing for short trips
+                        - Walk between nearby attractions
+            
+                        **Shopping Tips:**
+                        - Tax refund available for purchases over €100
+                        - Best sales (soldes) in January and July
+                        """)
+            
+                with tip_tabs[2]:  # Transportation tips
+                    st.markdown("### Getting Around Paris")
+                    col1, col2 = st.columns(2)
+                    with col1:
+                        st.markdown("""
+                        **Metro Tips:**
+                        - Download RATP app for navigation
+                        - Metro runs 5:30am-1:15am (2:15am weekends)
+                        - Keep ticket until you exit (inspections occur)
+                        - Line 1 connects many major attractions
+            
+                        **Airport Transfers:**
+                        - RER B train: CDG to central Paris (€11.40)
+                        - Orlybus: Orly to Denfert-Rochereau (€9.50)
+                        - Allow 60-90 minutes for airport transfers
+                        """)
+                    with col2:
+                        st.markdown("""
+                        **Walking Routes:**
+                        - Seine riverside paths connect many attractions
+                        - Covered passages (Passage des Panoramas, etc.)
+                        - Canal Saint-Martin for trendy neighborhoods
+            
+                        **Avoiding Crowds:**
+                        - Major attractions open early (8-9am)
+                        - Visit Louvre on Wednesday/Friday evenings
+                        - Eiffel Tower least crowded during dinner hours
+                        - Book tickets online to skip lines
+                        """)
+            
+                with tip_tabs[3]:  # Language tips
+                    st.markdown("### Essential French Phrases")
+                    phrases = {
+                        "Hello": "Bonjour (bon-zhoor)",
+                        "Good evening": "Bonsoir (bon-swahr)",
+                        "Please": "S'il vous plaît (seel voo pleh)",
+                        "Thank you": "Merci (mehr-see)",
+                        "You're welcome": "De rien (duh ree-en)",
+                        "Excuse me": "Excusez-moi (ex-koo-zay mwah)",
+                        "Do you speak English?": "Parlez-vous anglais? (par-lay voo on-glay)",
+                        "I don't understand": "Je ne comprends pas (zhuh nuh kom-pron pah)",
+                        "Where is...?": "Où est...? (oo eh)",
+                        "How much is it?": "C'est combien? (say kom-bee-en)",
+                        "The bill, please": "L'addition, s'il vous plaît (lah-dee-see-ohn seel voo pleh)"
+                    }
+            
+                    # Display phrases in a nice format
+                    for phrase, translation in phrases.items():
+                        st.markdown(f"**{phrase}:** {translation}")
+            
+                    st.info("💡 Tip: Even a simple 'Bonjour' before speaking English is greatly appreciated by locals!")
+            
+                with tip_tabs[4]:  # Safety tips
+                    st.markdown("### Safety & Etiquette")
+                    col1, col2 = st.columns(2)
+                    with col1:
+                        st.markdown("""
+                        **Common Scams to Avoid:**
+                        - Petition signers (distraction technique)
+                        - Friendship bracelet offers (especially near Sacré-Cœur)
+                        - "Gold ring" found on the ground
+                        - Forced help with ticket machines
+            
+                        **Pickpocket Awareness:**
+                        - Be vigilant on metro line 1 and at tourist spots
+                        - Front pockets or money belts recommended
+                        - Keep bags zipped and in front of you
+                        """)
+                    with col2:
+                        st.markdown("""
+                        **Emergency Numbers:**
+                        - General Emergency: 112
+                        - Police: 17
+                        - Ambulance: 15
+                        - Fire: 18
+            
+                        **Health & Comfort:**
+                        - Pharmacies marked with green cross signs
+                        - Public toilets (sanisettes) are free
+                        - Drinking water from Wallace fountains is safe
+                        - Dress in layers for changing weather
+                        """)
+            
+                    st.warning("⚠️ Be especially vigilant around the Eiffel Tower, Louvre, and Montmartre areas where pickpockets target tourists.")
+            
+            else:
+                # Generic tips for other destinations
+                st.info(f"Local tips for {destination} would appear here. Our travel experts are constantly updating our database with insider knowledge for destinations worldwide.")
+            
+                # Placeholder for generic tips
+                st.markdown("""
+                ### General Travel Tips:
+            
+                - Research local customs and etiquette before your trip
+                - Learn a few basic phrases in the local language
+                - Keep digital and physical copies of important documents
+                - Notify your bank of travel plans to avoid card blocks
+                - Consider purchasing travel insurance
+                - Stay hydrated and be mindful of jet lag
+                - Use apps like Google Maps to download offline maps
+                """)
             
             # Download option
             pdf_buffer = create_pdf(
