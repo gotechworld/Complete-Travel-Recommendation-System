@@ -12,6 +12,16 @@ from reportlab.lib.units import inch
 from reportlab.lib.enums import TA_CENTER, TA_JUSTIFY
 
 def create_pdf(content, destination, dates, budget, hotels, flights, activities):
+    from reportlab.lib import colors
+    from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
+    from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer, Table, TableStyle, Image, PageBreak
+    from reportlab.lib.pagesizes import letter
+    from reportlab.lib.units import inch
+    from reportlab.lib.enums import TA_CENTER, TA_JUSTIFY, TA_LEFT
+    import io
+    import re
+    import os
+
     buffer = io.BytesIO()
     doc = SimpleDocTemplate(buffer, pagesize=letter,
                            rightMargin=72, leftMargin=72,
@@ -78,13 +88,39 @@ def create_pdf(content, destination, dates, budget, hotels, flights, activities)
     italic_style = ParagraphStyle(
         name='CustomItalic',
         parent=styles['Italic'],
-        fontSize=10
+        fontSize=10,
+        alignment=TA_CENTER
+    )
+
+    footer_style = ParagraphStyle(
+        name='Footer',
+        parent=styles['Normal'],
+        fontSize=9,
+        textColor=colors.darkblue,
+        alignment=TA_CENTER
     )
 
     # Build document
     elements = []
 
-    # Cover page
+    # Logo and header
+    # Check if logo exists, if not, create a text-based header
+    logo_path = 'smart-travel.png'  # Update with the actual path to your logo
+    if os.path.exists(logo_path):
+        # Add logo with proper sizing
+        elements.append(Image(logo_path, width=2*inch, height=0.75*inch))
+    else:
+        # Text-based logo as fallback
+        elements.append(Paragraph("<b>SMART TRAVEL</b>",
+                                 ParagraphStyle(name='LogoText',
+                                              parent=styles['Title'],
+                                              fontSize=20,
+                                              alignment=TA_CENTER,
+                                              textColor=colors.darkblue)))
+
+    elements.append(Spacer(1, 0.25*inch))
+
+    # Title
     elements.append(Paragraph(f"Travel Itinerary", title_style))
     elements.append(Spacer(1, 0.25*inch))
 
@@ -272,12 +308,50 @@ def create_pdf(content, destination, dates, budget, hotels, flights, activities)
     elements.append(activity_table)
     elements.append(Spacer(1, 0.5*inch))
 
-    # Footer with improved styling
+    # Enhanced footer with contact information
     elements.append(Paragraph("Thank you for using our Smart Travel Planner!", italic_style))
-    elements.append(Paragraph("Contact us at office@smart-travel.com for any questions.", italic_style))
+    elements.append(Spacer(1, 0.1*inch))
 
-    # Build PDF
-    doc.build(elements)
+    # Contact information in footer
+    elements.append(Paragraph(
+        f"Contact us: <b>Email:</b> office@smart-travel.com | <b>Phone:</b> +39 3121144778",
+        footer_style
+    ))
+
+    # Build PDF with custom page template for header/footer
+    class FooterCanvas:
+        def __init__(self, canvas, doc):
+            self.canvas = canvas
+            self.doc = doc
+            self.width = letter[0]
+            self.height = letter[1]
+
+        def __call__(self, canvas, doc):
+            # Save state
+            canvas.saveState()
+
+            # Add a horizontal line above footer
+            canvas.setStrokeColor(colors.lightgrey)
+            canvas.setLineWidth(0.5)
+            canvas.line(72, 60, self.width - 72, 60)
+
+            # Add footer text
+            canvas.setFont('Helvetica', 8)
+            canvas.setFillColor(colors.darkblue)
+
+            # Company name and copyright
+            canvas.drawCentredString(self.width/2, 45, "Smart Travel - Your Journey, Our Expertise")
+            canvas.drawCentredString(self.width/2, 30, "Email: office@smart-travel.com | Phone: +39 3121144778")
+
+            # Add page number
+            page_num = canvas.getPageNumber()
+            canvas.drawRightString(self.width - 72, 30, f"Page {page_num}")
+
+            # Restore state
+            canvas.restoreState()
+
+    # Build PDF with custom footer
+    doc.build(elements, onFirstPage=FooterCanvas(None, None), onLaterPages=FooterCanvas(None, None))
     buffer.seek(0)
     return buffer
 
