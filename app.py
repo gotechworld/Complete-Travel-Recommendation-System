@@ -92,13 +92,6 @@ def main():
             st.caption("Insider advice to enhance your trip")
             st.write("Local tips would appear here")
 
-            # Download option
-            st.download_button(
-                label="📥 Download Travel Plan",
-                data=travel_plan,
-                file_name=f"{destination}_travel_plan.txt",
-                mime="text/plain"
-            )
 
 def create_pdf(content, destination):
     buffer = io.BytesIO()
