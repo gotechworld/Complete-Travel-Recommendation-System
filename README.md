@@ -30,3 +30,8 @@ __Note__: You'll need to provide your Google Gemini API KEY as an environment va
 </br>
 
 ![image](https://github.com/gotechworld/Complete-Travel-Recommendation-System/blob/main/images/output.png)
+
+</br>
+
+![image](https://github.com/gotechworld/Complete-Travel-Recommendation-System/blob/main/images/output-final.png)
+
