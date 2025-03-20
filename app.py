@@ -15,33 +15,36 @@ def create_pdf(content, destination, dates, budget, hotels, flights, activities)
                            rightMargin=72, leftMargin=72,
                            topMargin=72, bottomMargin=72)
 
-    # Styles
+    # Get styles and modify them instead of adding new ones
     styles = getSampleStyleSheet()
-    styles.add(ParagraphStyle(name='Title',
-                             fontName='Helvetica-Bold',
-                             fontSize=20,
-                             alignment=1,
-                             spaceAfter=12))
-    styles.add(ParagraphStyle(name='Heading2',
-                             fontName='Helvetica-Bold',
-                             fontSize=14,
-                             spaceBefore=12,
-                             spaceAfter=6))
-    styles.add(ParagraphStyle(name='Normal',
-                             fontName='Helvetica',
-                             fontSize=10,
-                             spaceBefore=6,
-                             spaceAfter=6))
-    styles.add(ParagraphStyle(name='Italic',
-                             fontName='Helvetica-Oblique',
-                             fontSize=10))
+
+    # Modify existing styles or create new ones with unique names
+    title_style = styles['Title']
+    title_style.alignment = 1
+    title_style.spaceAfter = 12
+
+    heading2_style = styles['Heading2']
+    heading2_style.spaceBefore = 12
+    heading2_style.spaceAfter = 6
+
+    normal_style = styles['Normal']
+    normal_style.spaceBefore = 6
+    normal_style.spaceAfter = 6
+
+    # Create a custom italic style with a unique name
+    italic_style = ParagraphStyle(
+        name='CustomItalic',
+        parent=styles['Normal'],
+        fontName='Helvetica-Oblique',
+        fontSize=10
+    )
 
     # Build document
     elements = []
 
     # Logo and header
     # elements.append(Image('logo.png', width=1.5*inch, height=0.5*inch))  # Uncomment if you have a logo
-    elements.append(Paragraph(f"Travel Itinerary", styles['Title']))
+    elements.append(Paragraph(f"Travel Itinerary", title_style))
     elements.append(Spacer(1, 0.25*inch))
 
     # Trip summary
@@ -65,12 +68,12 @@ def create_pdf(content, destination, dates, budget, hotels, flights, activities)
     elements.append(Spacer(1, 0.25*inch))
 
     # Itinerary
-    elements.append(Paragraph("Your Personalized Travel Plan", styles['Heading2']))
-    elements.append(Paragraph(content, styles['Normal']))
+    elements.append(Paragraph("Your Personalized Travel Plan", heading2_style))
+    elements.append(Paragraph(content, normal_style))
     elements.append(Spacer(1, 0.25*inch))
 
     # Flight information
-    elements.append(Paragraph("Flight Options", styles['Heading2']))
+    elements.append(Paragraph("Flight Options", heading2_style))
     flight_data = [['Airline', 'Price', 'Departure', 'Arrival']]
     for flight in flights[:3]:  # Show top 3 flights
         flight_data.append([
@@ -93,7 +96,7 @@ def create_pdf(content, destination, dates, budget, hotels, flights, activities)
     elements.append(Spacer(1, 0.25*inch))
 
     # Hotel information
-    elements.append(Paragraph("Accommodation Options", styles['Heading2']))
+    elements.append(Paragraph("Accommodation Options", heading2_style))
     hotel_data = [['Hotel', 'Price per Night', 'Rating']]
     for hotel in hotels[:3]:  # Show top 3 hotels
         hotel_data.append([
@@ -115,7 +118,7 @@ def create_pdf(content, destination, dates, budget, hotels, flights, activities)
     elements.append(Spacer(1, 0.25*inch))
 
     # Activities
-    elements.append(Paragraph("Recommended Activities", styles['Heading2']))
+    elements.append(Paragraph("Recommended Activities", heading2_style))
     activity_data = [['Activity', 'Price', 'Duration']]
     for activity in activities[:5]:  # Show top 5 activities
         activity_data.append([
@@ -137,8 +140,8 @@ def create_pdf(content, destination, dates, budget, hotels, flights, activities)
     elements.append(Spacer(1, 0.5*inch))
 
     # Footer
-    elements.append(Paragraph("Thank you for using our Smart Travel Planner!", styles['Italic']))
-    elements.append(Paragraph("Contact us at travel@example.com for any questions.", styles['Italic']))
+    elements.append(Paragraph("Thank you for using our Smart Travel Planner!", italic_style))
+    elements.append(Paragraph("Contact us at travel@example.com for any questions.", italic_style))
 
     # Build PDF
     doc.build(elements)
