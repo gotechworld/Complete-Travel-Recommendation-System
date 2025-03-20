@@ -1,7 +1,10 @@
 import streamlit as st
+import io
 from agentic.interface import TravelRequest
 from agentic.workflow import get_flights, get_hotels, get_activities
 from langchain_integration import generate_travel_plan
+from reportlab.lib.pagesizes import letter
+from reportlab.pdfgen import canvas
 
 def main():
     st.set_page_config(page_title="Travel Recommendation System", layout="wide")
@@ -96,6 +99,35 @@ def main():
                 file_name=f"{destination}_travel_plan.txt",
                 mime="text/plain"
             )
+
+def create_pdf(content, destination):
+    buffer = io.BytesIO()
+    c = canvas.Canvas(buffer, pagesize=letter)
+    width, height = letter
+
+    # Add title
+    c.setFont("Helvetica-Bold", 16)
+    c.drawString(72, height - 72, f"Travel Plan: {destination}")
+
+    # Add content
+    c.setFont("Helvetica", 12)
+    text_object = c.beginText(72, height - 100)
+    for line in content.split('\n'):
+        text_object.textLine(line)
+    c.drawText(text_object)
+
+    c.save()
+    buffer.seek(0)
+    return buffer
+
+pdf_buffer = create_pdf(travel_plan, destination)
+
+st.download_button(
+    label="📥 Download Travel Plan as PDF",
+    data=pdf_buffer,
+    file_name=f"{destination}_travel_plan.pdf",
+    mime="application/pdf"
+)
 
 if __name__ == "__main__":
     main()
