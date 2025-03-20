@@ -4,25 +4,144 @@ from agentic.interface import TravelRequest
 from agentic.workflow import get_flights, get_hotels, get_activities
 from langchain_integration import generate_travel_plan
 from reportlab.lib.pagesizes import letter
-from reportlab.pdfgen import canvas
+from reportlab.lib import colors
+from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
+from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer, Table, TableStyle, Image
+from reportlab.lib.units import inch
 
-def create_pdf(content, destination):
+def create_pdf(content, destination, dates, budget, hotels, flights, activities):
     buffer = io.BytesIO()
-    c = canvas.Canvas(buffer, pagesize=letter)
-    width, height = letter
+    doc = SimpleDocTemplate(buffer, pagesize=letter,
+                           rightMargin=72, leftMargin=72,
+                           topMargin=72, bottomMargin=72)
 
-    # Add title
-    c.setFont("Helvetica-Bold", 16)
-    c.drawString(72, height - 72, f"Travel Plan: {destination}")
+    # Styles
+    styles = getSampleStyleSheet()
+    styles.add(ParagraphStyle(name='Title',
+                             fontName='Helvetica-Bold',
+                             fontSize=20,
+                             alignment=1,
+                             spaceAfter=12))
+    styles.add(ParagraphStyle(name='Heading2',
+                             fontName='Helvetica-Bold',
+                             fontSize=14,
+                             spaceBefore=12,
+                             spaceAfter=6))
+    styles.add(ParagraphStyle(name='Normal',
+                             fontName='Helvetica',
+                             fontSize=10,
+                             spaceBefore=6,
+                             spaceAfter=6))
+    styles.add(ParagraphStyle(name='Italic',
+                             fontName='Helvetica-Oblique',
+                             fontSize=10))
 
-    # Add content
-    c.setFont("Helvetica", 12)
-    text_object = c.beginText(72, height - 100)
-    for line in content.split('\n'):
-        text_object.textLine(line)
-    c.drawText(text_object)
+    # Build document
+    elements = []
 
-    c.save()
+    # Logo and header
+    # elements.append(Image('logo.png', width=1.5*inch, height=0.5*inch))  # Uncomment if you have a logo
+    elements.append(Paragraph(f"Travel Itinerary", styles['Title']))
+    elements.append(Spacer(1, 0.25*inch))
+
+    # Trip summary
+    trip_info = [
+        ['Destination:', destination],
+        ['Travel Dates:', dates],
+        ['Budget:', f"${budget}"]
+    ]
+
+    trip_table = Table(trip_info, colWidths=[1.5*inch, 4*inch])
+    trip_table.setStyle(TableStyle([
+        ('BACKGROUND', (0, 0), (0, -1), colors.lightgrey),
+        ('TEXTCOLOR', (0, 0), (0, -1), colors.darkblue),
+        ('ALIGN', (0, 0), (0, -1), 'RIGHT'),
+        ('FONTNAME', (0, 0), (0, -1), 'Helvetica-Bold'),
+        ('BOTTOMPADDING', (0, 0), (-1, -1), 6),
+        ('TOPPADDING', (0, 0), (-1, -1), 6),
+        ('GRID', (0, 0), (-1, -1), 0.5, colors.grey)
+    ]))
+    elements.append(trip_table)
+    elements.append(Spacer(1, 0.25*inch))
+
+    # Itinerary
+    elements.append(Paragraph("Your Personalized Travel Plan", styles['Heading2']))
+    elements.append(Paragraph(content, styles['Normal']))
+    elements.append(Spacer(1, 0.25*inch))
+
+    # Flight information
+    elements.append(Paragraph("Flight Options", styles['Heading2']))
+    flight_data = [['Airline', 'Price', 'Departure', 'Arrival']]
+    for flight in flights[:3]:  # Show top 3 flights
+        flight_data.append([
+            flight['airline'],
+            f"${flight['price']}",
+            flight['departure'],
+            flight['arrival']
+        ])
+
+    flight_table = Table(flight_data, colWidths=[1.25*inch, 1*inch, 1.5*inch, 1.5*inch])
+    flight_table.setStyle(TableStyle([
+        ('BACKGROUND', (0, 0), (-1, 0), colors.lightblue),
+        ('TEXTCOLOR', (0, 0), (-1, 0), colors.whitesmoke),
+        ('ALIGN', (0, 0), (-1, -1), 'CENTER'),
+        ('FONTNAME', (0, 0), (-1, 0), 'Helvetica-Bold'),
+        ('BOTTOMPADDING', (0, 0), (-1, -1), 6),
+        ('GRID', (0, 0), (-1, -1), 0.5, colors.grey)
+    ]))
+    elements.append(flight_table)
+    elements.append(Spacer(1, 0.25*inch))
+
+    # Hotel information
+    elements.append(Paragraph("Accommodation Options", styles['Heading2']))
+    hotel_data = [['Hotel', 'Price per Night', 'Rating']]
+    for hotel in hotels[:3]:  # Show top 3 hotels
+        hotel_data.append([
+            hotel['name'],
+            f"${hotel['price']}",
+            f"{hotel['rating']}⭐"
+        ])
+
+    hotel_table = Table(hotel_data, colWidths=[2.5*inch, 1.5*inch, 1*inch])
+    hotel_table.setStyle(TableStyle([
+        ('BACKGROUND', (0, 0), (-1, 0), colors.lightblue),
+        ('TEXTCOLOR', (0, 0), (-1, 0), colors.whitesmoke),
+        ('ALIGN', (0, 0), (-1, -1), 'CENTER'),
+        ('FONTNAME', (0, 0), (-1, 0), 'Helvetica-Bold'),
+        ('BOTTOMPADDING', (0, 0), (-1, -1), 6),
+        ('GRID', (0, 0), (-1, -1), 0.5, colors.grey)
+    ]))
+    elements.append(hotel_table)
+    elements.append(Spacer(1, 0.25*inch))
+
+    # Activities
+    elements.append(Paragraph("Recommended Activities", styles['Heading2']))
+    activity_data = [['Activity', 'Price', 'Duration']]
+    for activity in activities[:5]:  # Show top 5 activities
+        activity_data.append([
+            activity['name'],
+            f"${activity['price']}",
+            activity['duration']
+        ])
+
+    activity_table = Table(activity_data, colWidths=[3*inch, 1*inch, 1*inch])
+    activity_table.setStyle(TableStyle([
+        ('BACKGROUND', (0, 0), (-1, 0), colors.lightblue),
+        ('TEXTCOLOR', (0, 0), (-1, 0), colors.whitesmoke),
+        ('ALIGN', (0, 0), (-1, -1), 'CENTER'),
+        ('FONTNAME', (0, 0), (-1, 0), 'Helvetica-Bold'),
+        ('BOTTOMPADDING', (0, 0), (-1, -1), 6),
+        ('GRID', (0, 0), (-1, -1), 0.5, colors.grey)
+    ]))
+    elements.append(activity_table)
+    elements.append(Spacer(1, 0.5*inch))
+
+    # Footer
+    elements.append(Paragraph("Thank you for using our Smart Travel Planner!", styles['Italic']))
+    elements.append(Paragraph("Contact us at travel@example.com for any questions.", styles['Italic']))
+
+    # Build PDF
+    doc.build(elements)
     buffer.seek(0)
     return buffer
 
@@ -112,8 +231,16 @@ def main():
             st.caption("Insider advice to enhance your trip")
             st.write("Local tips would appear here")
 
-            # Download option - moved inside the button click section
-            pdf_buffer = create_pdf(travel_plan, destination)
+            # Download option
+            pdf_buffer = create_pdf(
+                travel_plan,
+                destination,
+                dates,
+                budget,
+                hotels,
+                flights,
+                activities
+            )
             st.download_button(
                 label="📥 Download Travel Plan as PDF",
                 data=pdf_buffer,
