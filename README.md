@@ -10,12 +10,16 @@ This application uses Google AI Agentic framework, LangChain, and Streamlit to c
 - AI-generated travel itineraries
 - Budget optimization
 
+</br>
+
 ### Installation
-pip install -r requirements.txt
+pip install --no-cache-dir -r requirements.txt
 
 streamlit run app.py
 
 Access the application at http://localhost:8501
+
+</br>
 
 ### Containerize Streamlit app
 
@@ -24,6 +28,8 @@ Access the application at http://localhost:8501
 
 + Run the container:
 `docker container run -d -p 8501:8501 -e GOOGLE_API_KEY="" travel-planner`
+
+</br>
 
 __Note__: You'll need to provide your Google Gemini API KEY as an environment variable when running the container.
 
