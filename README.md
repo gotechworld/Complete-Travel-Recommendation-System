@@ -13,9 +13,9 @@ This application uses Google AI Agentic framework, LangChain, and Streamlit to c
 </br>
 
 ### Installation
-pip install --no-cache-dir -r requirements.txt
+`pip install --no-cache-dir -r requirements.txt`
 
-streamlit run app.py
+`streamlit run app.py`
 
 Access the application at http://localhost:8501
 
