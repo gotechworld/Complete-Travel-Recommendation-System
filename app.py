@@ -2,6 +2,7 @@ import streamlit as st
 import io
 import os
 import re
+import datetime
 from agentic.interface import TravelRequest
 from agentic.workflow import get_flights, get_hotels, get_activities
 from langchain_integration import generate_travel_plan
@@ -10,7 +11,7 @@ from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
 from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer, Table, TableStyle, Image, PageBreak
 from reportlab.lib.pagesizes import letter
 from reportlab.lib.units import inch
-from reportlab.lib.enums import TA_CENTER, TA_JUSTIFY, TA_LEFT
+from reportlab.lib.enums import TA_CENTER, TA_JUSTIFY, TA_LEFT, TA_RIGHT
 
 def create_pdf(content, destination, dates, budget, hotels, flights, activities):
 
@@ -115,6 +116,18 @@ def create_pdf(content, destination, dates, budget, hotels, flights, activities)
     # Title
     elements.append(Paragraph(f"Travel Itinerary", title_style))
     elements.append(Spacer(1, 0.25*inch))
+
+    # Add current date and time
+    current_datetime = datetime.datetime.now().strftime("%Y/%m/%d %H:%M:%S")
+    datetime_style = ParagraphStyle(
+    name='DateTime',
+    parent=styles['Normal'],
+    fontSize=9,
+    textColor=colors.darkblue,
+    alignment=TA_RIGHT
+    )
+    elements.append(Paragraph(f"Generated on: {current_datetime}", datetime_style))
+    elements.append(Spacer(1, 0.1*inch))
 
     # Trip summary table with better styling
     trip_info = [
